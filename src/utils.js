@@ -29,14 +29,6 @@ function Err(error) {
     throw new ResultException(error);
 }
 
-/**
- * @param {import("./opcodes").State} obj
- * @returns {import("./opcodes").State}
- */
-function deepCopy(obj) {
-    return JSON.parse(JSON.stringify(obj));
-}
-
 function to_number(value) {
     const num = Number(value);
     if (isNaN(num)) {
@@ -54,7 +46,6 @@ function handleResult(result) {
 module.exports = {
     ResultException,
     to_number,
-    deepCopy,
     Ok,
     Err
 }

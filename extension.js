@@ -2,7 +2,7 @@ const vscode = require('vscode');
 const { Stack } = require('./src/stack');
 const { convertOpcode: processOpcode } = require('./src/converter');
 const { opcodeList, customOpcodeList } = require('./src/opcodes');
-const {Ok, Err} = require('./src/utils');
+const {Ok, Err, ResultException} = require('./src/utils');
 
 
 /**
@@ -10,14 +10,22 @@ const {Ok, Err} = require('./src/utils');
  */
 function activate(context) {
 	const editor = vscode.window.activeTextEditor;
-	processBtcScript(editor);
+	console.log(editor.document.languageId);
+	let processor;
+	if (editor.document.languageId === "rust") {
+		processor = processBtcScriptInRustFile;
+	}
 
-	// context.subscriptions.push(disposable);
+	if (editor.document.languageId === "bitcoinscript") {
+		processor = processBtcScript;
+	}
+
+	processor(editor);
 	vscode.workspace.onDidChangeTextDocument((event) => {
-        if (editor && editor.document === event.document) {
-			processBtcScript(editor);
-        }
-    })
+		if (editor && editor.document === event.document) {
+			processor(editor);
+		}
+	})
 
 }
 
@@ -55,31 +63,34 @@ function deactivate() {}
 
 
 /**
- * @enum {string}
- */
-const Branch = {
-	IN_IF: "if",
-	IN_ELSE: "else"
-}
-
-/**
  * @typedef {Object} GlobalState
  * @property {Boolean} shouldContinue
  * @property {State} innerState
- * @property {Branch} branch
  */
+
+/**
+ * 
+ * @param {import('vscode').TextEditor} editor 
+ * @returns 
+ */
+function processBtcScript(editor) {
+	if (!editor) return;
+	const document = editor.document;
+	let text = document.getText();
+
+	handleScript(editor, 0, document.lineCount, 0);
+}
 
 /** 
 * @param {vscode.TextEditor} editor
 **/
-function processBtcScript(editor) {
+function processBtcScriptInRustFile(editor) {
 	if (!editor) return;
 
 	const document = editor.document;
 	const text = document.getText(); 
 	// recognizes script! { contents }, btcscript\n contents end-btcscript\n and more
 	const scriptRegex = /(script!\s*{([\s\S]*?)}|\/\/\s*(start-)?(bscript|btc-script|btcscript)(-start)?([\s\S]*?)\/\/\s*(end-)?(bscript|btc-script|btcscript)(-end)?)/gm;
-	const isWhitespaceString = str => !str.replace(/\s/g, '').length;
 
 	let match;
 	const edits = [];
@@ -88,11 +99,25 @@ function processBtcScript(editor) {
 		const blockStart = document.positionAt(match.index);
 		const blockEnd = document.positionAt(match.index + match[0].length);
 
-		// get the first line 
-		let stackElements = document.lineAt(blockStart.line + 1).text;
-		let {main, alt} = parseCommentForStacks(stackElements);
-		processStack(main).println();
-		processStack(alt).println();
+		handleScript(editor, blockStart.line, blockEnd.line,1);
+	}
+}
+
+/**
+ * 
+ * @param {import('vscode').TextEditor} editor 
+ * @param {Number} startLineNum 
+ * @param {Number} stopLineNum 
+ * @param {Number} offset 
+ * 
+ */
+function handleScript(editor, startLineNum, stopLineNum, offset) {
+		let document = editor.document;
+		let firstLine = document.lineAt(startLineNum + offset).text;
+		let {main, alt} = parseCommentForStacks(firstLine);
+		console.log(main);
+		console.log(alt);
+		const isWhitespaceString = str => !str.replace(/\s/g, '').length;
 		
 		/** @type {State} */
 		let innerState = {
@@ -102,55 +127,97 @@ function processBtcScript(editor) {
 
 		/** @type {GlobalState} */
 		let globalState = {
-			shouldContinue: false,
+			shouldContinue: true,
 			innerState: innerState,
-			branch: Branch.IN_IF 
 		}
 		
 
-		for (let line = blockStart.line + 2; line < blockEnd.line; line++) {
+		for (let line = startLineNum + 1 + offset; line < stopLineNum; line++) {
             const lineText = document.lineAt(line).text.trim();
 
             if (!lineText.startsWith('//') && !isWhitespaceString(lineText)) {
-				// addVirtualText(editor, line, "=> Testing", "gray");
-				processLine(lineText,globalState);
-				if (!globalState.shouldContinue) {
+				try {
+					let processedLine = processLine(lineText,globalState);
+					if (processedLine.ok) {
+						if(globalState.shouldContinue) {
+							addVirtualText(editor, line, ` =>  ${globalState.innerState.main.print()} ${globalState.innerState.alt.print()}`, "gray");
+						}
+					}
+				} catch(err){
+					addVirtualText(editor, line, ` => ${err.message} `, "red");
 					break;
 				}
             }
         }
-
-	}
 }
+
 /**
  * accepts trimmed lineText to see if there are any OP_CODE 
  * @param {String} lineText 
  * @param {GlobalState} globalState
+ * @throws {ResultException}
  * @returns {import('./src/utils').Result} 
  */
 function processLine(lineText, globalState) {
-	if (lineText.match(/OP_\w+/)) {
-		let convertedOpcode = processOpcode(lineText);	
+	let matchedText = lineText.match(/OP_\w+(?=,)?/);
+	if (matchedText) {
+		let convertedOpcode = processOpcode(matchedText[0]);	
 		let newState;
 
 		if (convertedOpcode.val !== undefined && convertedOpcode.val !== null) {
 			let opcodeFn;
 			if ((opcodeFn = customOpcodeList[convertedOpcode.op]) !== undefined) {
-				newState = opcodeFn(convertedOpcode.val)(globalState.innerState);
+				let s = opcodeFn(convertedOpcode.val);
+				newState = s(globalState.innerState);
 			}
 		}
 
 		let opcodeFn;
+		let processed = false;
 		if ((opcodeFn = opcodeList[convertedOpcode.op]) !== undefined) {
-			newState = opcodeFn(globalState.innerState);
+			// check if convertedOpcode is OP_IF 
+			switch (convertedOpcode.op) {
+				case "OP_IF":
+				case "OP_NOTIF":
+					newState = opcodeFn(globalState.innerState);
+					// if error is not present in newState
+					if (!("error" in newState)) {
+						globalState.shouldContinue = newState.if_result;
+					}
+					processed = true;
+					break;
+				case "OP_ELSE":
+					globalState.shouldContinue = !globalState.shouldContinue;
+					processed = false;
+					break;
+				case "OP_ENDIF":
+					newState = opcodeFn(globalState.innerState);
+					globalState.shouldContinue = true;
+					processed = true;
+					break;
+				default:
+					if (globalState.shouldContinue){
+						newState = opcodeFn(globalState.innerState);
+					} else {
+						newState = globalState.innerState;
+					}
+					processed = true;
+					break;
+			}
 		}
-
-		if ("error" in newState ) {
-			globalState.shouldContinue = false;
-			return Err(newState.error);
-		} 
-		globalState.innerState = newState;
-		return Ok(true);
+		if (processed) {
+			if ("error" in newState ) {
+				globalState.shouldContinue = false;
+				Err(newState.error);
+			} else {
+				globalState.innerState = newState;
+				return Ok(true);
+			}
+		} else {
+				return Ok(true);
+		}
+	} else {
+		console.log("didn't match");
 	}
 
 }

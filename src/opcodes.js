@@ -1,5 +1,5 @@
 let {Stack} = require('./stack');
-let {to_number, deepCopy, ResultException} = require('./utils');
+let {to_number, ResultException} = require('./utils');
 
 
 /**
@@ -48,13 +48,12 @@ function error(message, state) {
       if (state.main.size() < 1) {
         return error("Need one item for 0NOTEQUAL", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-      const val = new_state.main.pop();
-  
-      const num_val = to_number(val);
-      new_state.main.push(num_val !== 0 ? 1 : 0);
-      return new_state;
+        const val = state.main.pop();
+        const newVal = to_number(val);
+        state.main.push(newVal !== 0 ? 1 : 0);
+        return state;
       } catch(err_val) {
         return error(err_val, state);
       }
@@ -68,12 +67,12 @@ function error(message, state) {
     * push top + 1 => [main]
     */
     "OP_1ADD": function(state) {
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop();
+        const a = state.main.pop();
         let num = to_number(a);
-        new_state.main.push(num + 1);
-        return new_state;
+        state.main.push(num + 1);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -88,15 +87,15 @@ function error(message, state) {
     * push top - 1 => [main]
     */
     "OP_1SUB": function(state) {
-    const new_state = deepCopy(state);
+    
     try{
-      const a = new_state.main.pop();
+      const a = state.main.pop();
   
       const num_a = to_number(a);
-      new_state.main.push(num_a - 1);
-      return new_state;
-    } catch (err_a) {
-        return error(err_a, state);
+      state.main.push(num_a - 1);
+      return state;
+    } catch (err) {
+        return error(err, state);
     }
     },
   
@@ -112,11 +111,11 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for 2DROP", state);
       }
-      const new_state = deepCopy(state);
+      
       try{
-        new_state.main.pop();
-        new_state.main.pop();
-        return new_state;
+        state.main.pop();
+        state.main.pop();
+        return state;
       }catch(err) {
         return error(err, state);
       }
@@ -136,13 +135,13 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("requires two items for 2DUP", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.peek();
-        const b = new_state.main.peekNth(1);
-        new_state.main.push(b);
-        new_state.main.push(a);
-        return new_state;
+        const a = state.main.peek();
+        const b = state.main.peekNth(1);
+        state.main.push(b);
+        state.main.push(a);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -163,13 +162,13 @@ function error(message, state) {
       if (state.main.size() < 4) {
         return error("requires four items for 2OVER", state);
       }
-      const new_state = deepCopy(state);
+      
       try{
-        const third = new_state.main.peekNth(2);
-        const fourth = new_state.main.peekNth(3);
-        new_state.main.push(fourth);
-        new_state.main.push(third);
-        return new_state;
+        const third = state.main.peekNth(2);
+        const fourth = state.main.peekNth(3);
+        state.main.push(fourth);
+        state.main.push(third);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -199,22 +198,22 @@ function error(message, state) {
       if (state.main.size() < 6) {
         return error("Need six items for 2ROT", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop();
-        const b = new_state.main.pop();
-        const c = new_state.main.pop();
-        const d = new_state.main.pop();
-        const e = new_state.main.pop();
-        const f = new_state.main.pop();
+        const a = state.main.pop();
+        const b = state.main.pop();
+        const c = state.main.pop();
+        const d = state.main.pop();
+        const e = state.main.pop();
+        const f = state.main.pop();
     
-        new_state.main.push(d);
-        new_state.main.push(c);
-        new_state.main.push(b);
-        new_state.main.push(a);
-        new_state.main.push(f);
-        new_state.main.push(e);
-        return new_state;
+        state.main.push(d);
+        state.main.push(c);
+        state.main.push(b);
+        state.main.push(a);
+        state.main.push(f);
+        state.main.push(e);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -240,18 +239,18 @@ function error(message, state) {
       if (state.main.size() < 4) {
         return error("Need four items for 2SWAP", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop();
-        const b = new_state.main.pop();
-        const c = new_state.main.pop();
-        const d = new_state.main.pop();
+        const a = state.main.pop();
+        const b = state.main.pop();
+        const c = state.main.pop();
+        const d = state.main.pop();
     
-        new_state.main.push(b);
-        new_state.main.push(a);
-        new_state.main.push(d);
-        new_state.main.push(c);
-        return new_state;
+        state.main.push(b);
+        state.main.push(a);
+        state.main.push(d);
+        state.main.push(c);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -274,15 +273,15 @@ function error(message, state) {
       if (state.main.size() < 3) {
         return error("Need three items for 3DUP", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.peek();
-        const b = new_state.main.peekNth(1);
-        const c = new_state.main.peekNth(2);
-        new_state.main.push(c);
-        new_state.main.push(b);
-        new_state.main.push(a);
-        return new_state;
+        const a = state.main.peek();
+        const b = state.main.peekNth(1);
+        const c = state.main.peekNth(2);
+        state.main.push(c);
+        state.main.push(b);
+        state.main.push(a);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -301,12 +300,12 @@ function error(message, state) {
       if (state.main.size() < 1) {
         return error("Need one item for ABS", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const val = new_state.main.pop();
-        const num_val = to_number(val);
-        new_state.main.push(Math.abs(num_val));
-        return new_state;
+        const val = state.main.pop();
+        const newVal = to_number(val);
+        state.main.push(Math.abs(newVal));
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -326,16 +325,16 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for ADD", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop();
-        const b = new_state.main.pop();
+        const a = state.main.pop();
+        const b = state.main.pop();
     
         const num_a = to_number(a);
         const num_b = to_number(b);
     
-        new_state.main.push(num_b + num_a);
-        return new_state;
+        state.main.push(num_b + num_a);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -357,16 +356,16 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for BOOLAND", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop();
-        const b = new_state.main.pop();
+        const a = state.main.pop();
+        const b = state.main.pop();
     
         const num_a = to_number(a);
         const num_b = to_number(b);
     
-        new_state.main.push(num_a !== 0 && num_b !== 0 ? 1 : 0);
-        return new_state;
+        state.main.push(num_a !== 0 && num_b !== 0 ? 1 : 0);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -387,16 +386,16 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for BOOLOR", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop();
-        const b = new_state.main.pop();
+        const a = state.main.pop();
+        const b = state.main.pop();
     
         const num_a = to_number(a);
         const num_b = to_number(b);
     
-        new_state.main.push(num_a !== 0 || num_b !== 0 ? 1 : 0);
-        return new_state;
+        state.main.push(num_a !== 0 || num_b !== 0 ? 1 : 0);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -416,13 +415,13 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for CAT", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop();
-        const b = new_state.main.pop();
+        const a = state.main.pop();
+        const b = state.main.pop();
     
-        new_state.main.push(`${String(a)}||${String(b)}`);
-        return new_state;
+        state.main.push(`${String(a)}||${String(b)}`);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -453,50 +452,50 @@ function error(message, state) {
       if (state.main.size() < 1) {
         return error("Need number of pubkeys for CHECKMULTISIG", state);
       }
-      const new_state = deepCopy(state);
+      
   
       
     //Get number of pubkeys
     try {
-      const n_pubkeys = new_state.main.pop();
+      const n_pubkeys = state.main.pop();
       const num_pubkeys = to_number(n_pubkeys);
 
     // Check if we have enough items for pubkeys
-      if (new_state.main.size() < num_pubkeys) {
+      if (state.main.size() < num_pubkeys) {
         return error("Stack underflow: not enough pubkeys", state);
       }
      
     // Remove pubkeys
       for (let i = 0; i < num_pubkeys; i++) {
-        new_state.main.pop();
+        state.main.pop();
       }
    
      // Get number of signatures
-      if (new_state.main.size() < 1) {
+      if (state.main.size() < 1) {
         return error("Need number of signatures", state);
       }
-      const n_sigs = new_state.main.pop();
+      const n_sigs = state.main.pop();
       const num_sigs = to_number(n_sigs);
       
      // Check if we have enough items for signatures
-      if (new_state.main.size() < num_sigs) {
+      if (state.main.size() < num_sigs) {
         return error("Stack underflow: not enough signatures", state);
       }
   
      // Remove signatures
       for (let i = 0; i < num_sigs; i++) {
-        new_state.main.pop();
+        state.main.pop();
       }
        
       // Remove the extra dummy element that Bitcoin requires
-      if (new_state.main.size() < 1) {
+      if (state.main.size() < 1) {
         return error("Need dummy element", state);
       }
-      new_state.main.pop();
+      state.main.pop();
   
       // Always push 1 to simulate successful verification
-      new_state.main.push(1);
-      return new_state;
+      state.main.push(1);
+      return state;
       } catch(err) {
         return error(err, state);
       }
@@ -524,57 +523,57 @@ function error(message, state) {
       if (state.main.size() < 1) {
         return error("Need number of pubkeys for CHECKMULTISIGVERIFY", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
         // Get number of pubkeys
-        const n_pubkeys = new_state.main.pop();
+        const n_pubkeys = state.main.pop();
         const num_pubkeys = to_number(n_pubkeys);
     
         // Check if we have enough items for pubkeys
-        if (new_state.main.size() < num_pubkeys) {
+        if (state.main.size() < num_pubkeys) {
             return error("Stack underflow: not enough pubkeys", state);
         }
     
         // Remove pubkeys
         for (let i = 0; i < num_pubkeys; i++) {
-            new_state.main.pop();
+            state.main.pop();
         }
     
         // Get number of signatures
-        if (new_state.main.size() < 1) {
+        if (state.main.size() < 1) {
             return error("Need number of signatures", state);
         }
-        const n_sigs = new_state.main.pop();
+        const n_sigs = state.main.pop();
         const num_sigs = to_number(n_sigs);
     
         // Check if we have enough items for signatures
-        if (new_state.main.size() < num_sigs) {
+        if (state.main.size() < num_sigs) {
             return error("Stack underflow: not enough signatures", state);
         }
     
         // Remove signatures
         for (let i = 0; i < num_sigs; i++) {
-            new_state.main.pop();
+            state.main.pop();
         }
     
         // Remove the extra dummy element that Bitcoin requires
-        if (new_state.main.size() < 1) {
+        if (state.main.size() < 1) {
             return error("Need dummy element", state);
         }
-        new_state.main.pop();
+        state.main.pop();
     
         // Always push 1 to simulate successful verification
-        new_state.main.push(1);
+        state.main.push(1);
     
         // Verify the result
-        const val = new_state.main.pop();
-        const num_val = to_number(val);
+        const val = state.main.pop();
+        const newVal = to_number(val);
     
-        if (num_val === 0) {
+        if (newVal === 0) {
             return error("Verification failed", state);
         }
     
-        return new_state;
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -594,14 +593,14 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need pubkey and signature for CHECKSIG", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-      new_state.main.pop(); // pubkey
-      new_state.main.pop(); // signature
+      state.main.pop(); // pubkey
+      state.main.pop(); // signature
   
       // Always push 1 to simulate successful verification
-      new_state.main.push(1);
-      return new_state;
+      state.main.push(1);
+      return state;
       } catch(err) {
         return error(err, state);
       }
@@ -623,17 +622,17 @@ function error(message, state) {
       if (state.main.size() < 3) {
         return error("Need number, pubkey, and signature for CHECKSIGADD", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        new_state.main.pop(); // pubkey
-        new_state.main.pop(); // signature
-        const n = new_state.main.pop(); // current count
+        state.main.pop(); // pubkey
+        state.main.pop(); // signature
+        const n = state.main.pop(); // current count
     
         const num_n = to_number(n);
     
         // Always add 1 to simulate successful signature check
-        new_state.main.push(num_n + 1);
-        return new_state;
+        state.main.push(num_n + 1);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -653,22 +652,22 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need pubkey and signature for CHECKSIGVERIFY", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-      new_state.main.pop(); // pubkey
-      new_state.main.pop(); // signature
+      state.main.pop(); // pubkey
+      state.main.pop(); // signature
   
       // Always push 1 to simulate successful verification
-      new_state.main.push(1);
+      state.main.push(1);
   
       // Verify the result
-      const val = new_state.main.pop();
-      const num_val = to_number(val);
-      if (num_val === 0) {
+      const val = state.main.pop();
+      const newVal = to_number(val);
+      if (newVal === 0) {
         return error("Verification failed", state);
       }
   
-      return new_state;
+      return state;
       } catch(err) {
         return error(err, state);
       }
@@ -684,9 +683,9 @@ function error(message, state) {
     * push len_stack => [main]
     */
     "OP_DEPTH": function(state) {
-      const new_state = deepCopy(state);
-      new_state.main.push(new_state.main.size());
-      return new_state;
+      
+      state.main.push(state.main.size());
+      return state;
     },
   
     /** 
@@ -701,10 +700,10 @@ function error(message, state) {
       if (state.main.size() < 1) {
         return error("Need one item for DROP", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        new_state.main.pop();
-        return new_state;
+        state.main.pop();
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -723,11 +722,11 @@ function error(message, state) {
       if (state.main.size() === 0) {
         return error("Stack underflow", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const val = new_state.main.peek()
-        new_state.main.push(val);
-        return new_state;
+        const val = state.main.peek()
+        state.main.push(val);
+        return state;
       }catch(err) {
         return error(err, state);
       }
@@ -743,9 +742,9 @@ function error(message, state) {
       if (state.if_result === undefined) {
         return error("ELSE without matching IF", state);
       }
-      const new_state = deepCopy(state);
-      new_state.if_result = !new_state.if_result;
-      return new_state;
+      
+      state.if_result = !state.if_result;
+      return state;
     },
   
     /** 
@@ -755,9 +754,9 @@ function error(message, state) {
     * @returns {State | StateError} 
     */
     "OP_ENDIF": function(state) {
-      const new_state = deepCopy(state);
-      delete new_state.if_result;
-      return new_state;
+      
+      delete state.if_result;
+      return state;
     },
   
     /** 
@@ -774,13 +773,13 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for EQUAL", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop();
-        const b = new_state.main.pop();
+        const a = state.main.pop();
+        const b = state.main.pop();
     
-        new_state.main.push(a === b ? 1 : 0);
-        return new_state;
+        state.main.push(a === b ? 1 : 0);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -800,21 +799,21 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for EQUALVERIFY", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop();
-        const b = new_state.main.pop();
+        const a = state.main.pop();
+        const b = state.main.pop();
     
-        new_state.main.push(a === b ? 1 : 0);
+        state.main.push(a === b ? 1 : 0);
     
-        const val = new_state.main.pop();
-        const num_val = to_number(val);
+        const val = state.main.pop();
+        const newVal = to_number(val);
     
-        if (num_val === 0) {
+        if (newVal === 0) {
             return error("Verification failed", state);
         }
     
-        return new_state;
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -834,11 +833,11 @@ function error(message, state) {
       if (state.alt.size() === 0) {
         return error("Alt stack underflow", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const val = new_state.alt.pop();
-        new_state.main.push(val);
-        return new_state;
+        const val = state.alt.pop();
+        state.main.push(val);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -858,16 +857,16 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for GREATERTHAN", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop();
-        const b = new_state.main.pop();
+        const a = state.main.pop();
+        const b = state.main.pop();
     
         const num_a = to_number(a);
         const num_b = to_number(b);
     
-        new_state.main.push(num_b > num_a ? 1 : 0);
-        return new_state;
+        state.main.push(num_b > num_a ? 1 : 0);
+        return state;
       }catch(err) {
         return error(err, state);
       }
@@ -887,16 +886,16 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for GREATERTHANOREQUAL", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop();
-        const b = new_state.main.pop();
+        const a = state.main.pop();
+        const b = state.main.pop();
     
         const num_a = to_number(a);
         const num_b = to_number(b);
     
-        new_state.main.push(num_b >= num_a ? 1 : 0);
-        return new_state;
+        state.main.push(num_b >= num_a ? 1 : 0);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -915,11 +914,11 @@ function error(message, state) {
       if (state.main.size() < 1) {
         return error("Stack underflow", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const val = new_state.main.pop();
-        new_state.main.push(`Hash(${String(val)})`);
-        return new_state;
+        const val = state.main.pop();
+        state.main.push(`Hash(${String(val)})`);
+        return state;
       }catch(err) {
         return error(err, state);
       }
@@ -935,15 +934,14 @@ function error(message, state) {
       if (state.main.size() < 1) {
         return error("Need one item for IF", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const condition = new_state.main.pop();
-    
+        const condition = state.main.pop();
         const num_condition = to_number(condition);
     
-        new_state.if_result = num_condition !== 0;
-        return new_state;
-      }catch(err) {
+        state.if_result = num_condition !== 0;
+        return state;
+      } catch(err) {
         return error(err, state);
       }
     },
@@ -962,17 +960,17 @@ function error(message, state) {
       if (state.main.size() === 0) {
         return error("Need one item for IFDUP", state);
       }
-      const new_state = deepCopy(state);
+      
 
       try {
-        const val = new_state.main.peek();
+        const val = state.main.peek();
         const num_condition = to_number(val);
     
         if (num_condition !== 0) {
-            new_state.main.push(val);
+            state.main.push(val);
         }
     
-        return new_state;
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -992,16 +990,16 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for LESSTHAN", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop();
-        const b = new_state.main.pop();
+        const a = state.main.pop();
+        const b = state.main.pop();
     
         const num_a = to_number(a);
         const num_b = to_number(b);
     
-        new_state.main.push(num_b < num_a ? 1 : 0);
-        return new_state;
+        state.main.push(num_b < num_a ? 1 : 0);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -1021,16 +1019,16 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for LESSTHANOREQUAL", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop();
-        const b = new_state.main.pop();
+        const a = state.main.pop();
+        const b = state.main.pop();
     
         const num_a = to_number(a);
         const num_b = to_number(b);
     
-        new_state.main.push(num_b <= num_a ? 1 : 0);
-        return new_state;
+        state.main.push(num_b <= num_a ? 1 : 0);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -1050,16 +1048,16 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for MAX", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop();
-        const b = new_state.main.pop();
+        const a = state.main.pop();
+        const b = state.main.pop();
     
         const num_a = to_number(a);
         const num_b = to_number(b);
     
-        new_state.main.push(Math.max(num_a, num_b));
-        return new_state;
+        state.main.push(Math.max(num_a, num_b));
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -1079,16 +1077,16 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for MIN", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop();
-        const b = new_state.main.pop();
+        const a = state.main.pop();
+        const b = state.main.pop();
     
         const num_a = to_number(a);
         const num_b = to_number(b);
     
-        new_state.main.push(Math.min(num_a, num_b));
-        return new_state;
+        state.main.push(Math.min(num_a, num_b));
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -1107,13 +1105,13 @@ function error(message, state) {
       if (state.main.size() < 1) {
         return error("Need one item for NEGATE", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const val = new_state.main.pop();
+        const val = state.main.pop();
     
-        const  num_val = to_number(val);
-        new_state.main.push(-num_val);
-        return new_state;
+        const  newVal = to_number(val);
+        state.main.push(-newVal);
+        return state;
       }catch(err) {
         return error(err, state);
       }
@@ -1133,12 +1131,12 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for NIP", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const top = new_state.main.pop(); // save top item
-        new_state.main.pop();             // remove second item
-        new_state.main.push(top);         // restore top item
-        return new_state;
+        const top = state.main.pop(); // save top item
+        state.main.pop();             // remove second item
+        state.main.push(top);         // restore top item
+        return state;
       }catch(err) {
         return error(err, state);
       }
@@ -1166,13 +1164,13 @@ function error(message, state) {
       if (state.main.size() < 1) {
         return error("Need one item for NOT", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-      const val = new_state.main.pop();
+      const val = state.main.pop();
   
-      const num_val = to_number(val);
-      new_state.main.push(num_val === 0 ? 1 : 0);
-      return new_state;
+      const newVal = to_number(val);
+      state.main.push(newVal === 0 ? 1 : 0);
+      return state;
       } catch(err) {
         return error(err, state);
       }
@@ -1190,13 +1188,13 @@ function error(message, state) {
         if (state.main.size() < 1) {
             return error("Need one item for NOTIF", state);
         }
-        const new_state = deepCopy(state);
-        const condition = new_state.main.pop();
+        
+        const condition = state.main.pop();
     
         const  num_condition  = to_number(condition);
     
-        new_state.if_result = num_condition === 0;
-        return new_state;
+        state.if_result = num_condition === 0;
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -1217,16 +1215,16 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for NUMEQUAL", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop();
-        const b = new_state.main.pop();
+        const a = state.main.pop();
+        const b = state.main.pop();
     
         const num_a = to_number(a);
         const num_b = to_number(b);
     
-        new_state.main.push(num_b === num_a ? 1 : 0);
-        return new_state;
+        state.main.push(num_b === num_a ? 1 : 0);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -1246,24 +1244,24 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for NUMEQUALVERIFY", state);
       }
-      const new_state = deepCopy(state);
+      
     try {
-      const a = new_state.main.pop();
-      const b = new_state.main.pop();
+      const a = state.main.pop();
+      const b = state.main.pop();
   
       const num_a = to_number(a);
       const num_b = to_number(b);
   
-      new_state.main.push(num_b === num_a ? 1 : 0);
+      state.main.push(num_b === num_a ? 1 : 0);
   
-      const val = new_state.main.pop();
-      const num_val  = to_number(val);
+      const val = state.main.pop();
+      const newVal  = to_number(val);
   
-      if (num_val === 0) {
+      if (newVal === 0) {
         return error("Verification failed", state);
       }
   
-      return new_state;
+      return state;
       } catch(err) {
         return error(err, state);
       }
@@ -1283,16 +1281,16 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for NUMNOTEQUAL", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop();
-        const b = new_state.main.pop();
+        const a = state.main.pop();
+        const b = state.main.pop();
     
         const num_a = to_number(a);
         const num_b = to_number(b);
     
-        new_state.main.push(num_b !== num_a ? 1 : 0);
-        return new_state;
+        state.main.push(num_b !== num_a ? 1 : 0);
+        return state;
       }catch(err) {
         return error(err, state);
       }
@@ -1311,11 +1309,11 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for OVER", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const second = new_state.main.peekNth(1);
-        new_state.main.push(second);
-        return new_state;
+        const second = state.main.peekNth(1);
+        state.main.push(second);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -1334,18 +1332,18 @@ function error(message, state) {
       if (state.main.size() < 1) {
         return error("Need index for PICK", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const n = new_state.main.pop();
+        const n = state.main.pop();
     
         const  num_n = to_number(n);
-        if (new_state.main.size() < num_n + 1) {
+        if (state.main.size() < num_n + 1) {
             return error("Stack too small for PICK", state);
         }
     
-        const item = new_state.main.peekNth(num_n);
-        new_state.main.push(item);
-        return new_state;
+        const item = state.main.peekNth(num_n);
+        state.main.push(item);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -1371,31 +1369,31 @@ function error(message, state) {
       if (state.main.size() < 1) {
         return error("Need index for ROLL", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-      const n = new_state.main.pop();
+      const n = state.main.pop();
   
       const num_n = to_number(n);
   
-      if (new_state.main.size() < num_n + 1) {
+      if (state.main.size() < num_n + 1) {
         return error("Stack too small for ROLL", state);
       }
   
       // pop the element from main stack to temp_stack
       let temp_stack = [];
       for (let i = 0; i < num_n; i++) {
-        temp_stack.push(new_state.main.pop());
+        temp_stack.push(state.main.pop());
       }
       // pop the element that should go to top
-      let element_to_top = new_state.main.pop(); 
+      let element_to_top = state.main.pop(); 
       
       // push temp_stack items to main stack
       for (let i = 0; i < num_n; i++) {
-        new_state.main.push(temp_stack.pop());
+        state.main.push(temp_stack.pop());
       }
       // push the element that should go to first
-      new_state.main.push(element_to_top);
-      return new_state;
+      state.main.push(element_to_top);
+      return state;
 
       } catch(err) {
         return error(err, state);
@@ -1419,15 +1417,15 @@ function error(message, state) {
       if (state.main.size() < 3) {
         return error("Need three items for ROT", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop();
-        const b = new_state.main.pop();
-        const c = new_state.main.pop();
-        new_state.main.push(b);
-        new_state.main.push(a);
-        new_state.main.push(c);
-        return new_state;
+        const a = state.main.pop();
+        const b = state.main.pop();
+        const c = state.main.pop();
+        state.main.push(b);
+        state.main.push(a);
+        state.main.push(c);
+        return state;
       }catch(err) {
         return error(err, state);
       }
@@ -1447,11 +1445,11 @@ function error(message, state) {
         if (state.main.size() < 1) {
         return error("Need one item for SIZE", state);
         }
-        const new_state = deepCopy(state);
+        
         try {
-            const val = String(new_state.main.peek());
-            new_state.main.push(val.length);
-            return new_state;
+            const val = String(state.main.peek());
+            state.main.push(val.length);
+            return state;
         } catch(err) {
             return error(err, state);
         }
@@ -1471,16 +1469,16 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for SUB", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop();
-        const b = new_state.main.pop();
+        const a = state.main.pop();
+        const b = state.main.pop();
     
         const num_a = to_number(a);
         const num_b = to_number(b);
     
-        new_state.main.push(num_b - num_a);
-        return new_state;
+        state.main.push(num_b - num_a);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -1501,13 +1499,13 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for SWAP", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop();
-        const b = new_state.main.pop();
-        new_state.main.push(a);
-        new_state.main.push(b);
-        return new_state;
+        const a = state.main.pop();
+        const b = state.main.pop();
+        state.main.push(a);
+        state.main.push(b);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -1526,11 +1524,11 @@ function error(message, state) {
       if (state.main.size() === 0) {
         return error("Stack underflow", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const val = new_state.main.pop();
-        new_state.alt.push(val);
-        return new_state;
+        const val = state.main.pop();
+        state.alt.push(val);
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -1552,14 +1550,14 @@ function error(message, state) {
       if (state.main.size() < 2) {
         return error("Need two items for TUCK", state);
       }
-      const new_state = deepCopy(state);
+      
       try {
-        const a = new_state.main.pop(); // top
-        const b = new_state.main.pop(); // second
-        new_state.main.push(a);         // insert top item third
-        new_state.main.push(b);         // restore second
-        new_state.main.push(a);         // restore top
-        return new_state;
+        const a = state.main.pop(); // top
+        const b = state.main.pop(); // second
+        state.main.push(a);         // insert top item third
+        state.main.push(b);         // restore second
+        state.main.push(a);         // restore top
+        return state;
       } catch(err) {
         return error(err, state);
       }
@@ -1579,14 +1577,14 @@ function error(message, state) {
         return error("Need one item for VERIFY", state);
       }
       try {
-        const new_state = deepCopy(state);
-        const val = new_state.main.pop();
-        const num_val  = to_number(val);
+        
+        const val = state.main.pop();
+        const newVal  = to_number(val);
     
-        if (num_val === 0) {
+        if (newVal === 0) {
             return error("Verification failed", state);
         }
-        return new_state;
+        return state;
 
       } catch(err) {
         return error(err, state);
@@ -1610,18 +1608,18 @@ function error(message, state) {
       if (state.main.size() < 3) {
         return error("Need three items for WITHIN", state);
       }
-      const new_state = deepCopy(state);
+      
       try { 
-      const max = new_state.main.pop();
-      const min = new_state.main.pop();
-      const x = new_state.main.pop();
+      const max = state.main.pop();
+      const min = state.main.pop();
+      const x = state.main.pop();
   
       const  num_max = to_number(max);
       const  num_min = to_number(min);
       const num_x = to_number(x);
   
-      new_state.main.push(num_x >= num_min && num_x < num_max ? 1 : 0);
-      return new_state;
+      state.main.push(num_x >= num_min && num_x < num_max ? 1 : 0);
+      return state;
       } catch(err) {
         return error(err, state);
       }
@@ -1648,17 +1646,11 @@ function error(message, state) {
     * Numbers like OP_0, OP_FALSE , OP_2, OP_3 
     * @param {Number} num
     * @returns {(state: State) => State} 
-    * 
-    * peek  => third
-    * peek 4 [main] => fourth 
-    * push fourth => [main]
-    * push third => [main]
     */
     "OP_NUMBER": function(num) {
       return function(state) {
-        const new_state = deepCopy(state);
-        new_state.main.push(num);
-        return new_state;
+        state.main.push(num);
+        return state;
       };
     },
   }
