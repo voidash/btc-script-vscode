@@ -1,8 +1,10 @@
-<img src="https://github.com/user-attachments/assets/55760071-d7f5-4bae-b388-3ebb4b3838e1"  width="240" align="right" style="margin-top:-40px">
+<img src="https://github.com/user-attachments/assets/55760071-d7f5-4bae-b388-3ebb4b3838e1"  width="240" align="right" style="margin-top:-60px">
 
 # [`BitcoinScriptVscode`](https://github.com/voidash/btc-script-vscode)  🔗🔥
 
+[Extension URL](https://marketplace.visualstudio.com/items?itemName=AshishThapa.btc-script)
 VScode plugin for Bitcoin Script within Rust files and (<b><i>.btc</i></b>) files 
+
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
 
