@@ -1,15 +1,19 @@
 {
   "name": "btc-script",
   "displayName": "btc-script",
-  "description": "",
+  "description": "https://github.com/voidash/btc-script-vscode",
   "version": "0.0.1",
+  "repository": {},
   "engines": {
     "vscode": "^1.95.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": ["*"],
+  "activationEvents": [
+    "onLanguage:rust",
+    "onLanguage:btc"
+  ],
   "main": "./extension.js",
   "contributes": {
     "languages": [

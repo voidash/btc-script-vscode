@@ -6,11 +6,11 @@ const {Ok, Err, ResultException} = require('./src/utils');
 
 
 /**
- * @param {vscode.ExtensionContext} context
+ * 
+ * @param {vscode.ExtensionContext} context 
+ * @param {import('vscode').TextEditor} editor 
  */
-function activate(context) {
-	const editor = vscode.window.activeTextEditor;
-	console.log(editor.document.languageId);
+function activate_inner(context,editor) {
 	let processor;
 	if (editor.document.languageId === "rust") {
 		processor = processBtcScriptInRustFile;
@@ -26,7 +26,18 @@ function activate(context) {
 			processor(editor);
 		}
 	})
+}
 
+/**
+ * @param {vscode.ExtensionContext} context
+ */
+function activate(context) {
+	const editor = vscode.window.activeTextEditor;
+	activate_inner(context, editor); 
+
+	vscode.window.onDidChangeActiveTextEditor((editor) => {
+		activate_inner(context, editor);
+	})
 }
 
 /**
@@ -65,6 +76,7 @@ function deactivate() {}
 /**
  * @typedef {Object} GlobalState
  * @property {Boolean} shouldContinue
+ * @property {Boolean} shouldRender
  * @property {State} innerState
  */
 
@@ -98,7 +110,6 @@ function processBtcScriptInRustFile(editor) {
 	while ((match = scriptRegex.exec(text)) !== null) {
 		const blockStart = document.positionAt(match.index);
 		const blockEnd = document.positionAt(match.index + match[0].length);
-
 		handleScript(editor, blockStart.line, blockEnd.line,1);
 	}
 }
@@ -114,20 +125,23 @@ function processBtcScriptInRustFile(editor) {
 function handleScript(editor, startLineNum, stopLineNum, offset) {
 		let document = editor.document;
 		let firstLine = document.lineAt(startLineNum + offset).text;
-		let {main, alt} = parseCommentForStacks(firstLine);
-		console.log(main);
-		console.log(alt);
+		let stacks = parseCommentForStacks(firstLine);
 		const isWhitespaceString = str => !str.replace(/\s/g, '').length;
+
+		if (stacks === null ){
+			return; 
+		}
 		
 		/** @type {State} */
 		let innerState = {
-			main: processStack(main),
-			alt: processStack(alt) 
+			main: processStack(stacks.main),
+			alt: processStack(stacks.alt) 
 		};
 
 		/** @type {GlobalState} */
 		let globalState = {
 			shouldContinue: true,
+			shouldRender: true,
 			innerState: innerState,
 		}
 		
@@ -150,6 +164,12 @@ function handleScript(editor, startLineNum, stopLineNum, offset) {
             }
         }
 }
+/**
+ * 
+ * @param {import('./src/converter').convertedOp} convertedOpcode 
+ * @param {GlobalState} globalState 
+ * @returns 
+ */
 
 /**
  * accepts trimmed lineText to see if there are any OP_CODE 
@@ -159,7 +179,8 @@ function handleScript(editor, startLineNum, stopLineNum, offset) {
  * @returns {import('./src/utils').Result} 
  */
 function processLine(lineText, globalState) {
-	let matchedText = lineText.match(/OP_\w+(?=,)?/);
+	let matchedText = lineText.match(/(OP_\w+|\b0[oO][0-7]+\b|\b0[xX][0-9a-fA-F]+\b|\b\d+\b)(?=,)?/);
+	console.log(matchedText);
 	if (matchedText) {
 		let convertedOpcode = processOpcode(matchedText[0]);	
 		let newState;
@@ -184,24 +205,28 @@ function processLine(lineText, globalState) {
 					if (!("error" in newState)) {
 						globalState.shouldContinue = newState.if_result;
 					}
+					globalState.shouldRender = false;
 					processed = true;
 					break;
 				case "OP_ELSE":
 					globalState.shouldContinue = !globalState.shouldContinue;
+					globalState.shouldRender = false;
 					processed = false;
 					break;
 				case "OP_ENDIF":
 					newState = opcodeFn(globalState.innerState);
+					globalState.shouldRender = false;
 					globalState.shouldContinue = true;
 					processed = true;
 					break;
 				default:
+					globalState.shouldRender = true;
 					if (globalState.shouldContinue){
 						newState = opcodeFn(globalState.innerState);
+						processed = true;
 					} else {
-						newState = globalState.innerState;
+						processed = false;
 					}
-					processed = true;
 					break;
 			}
 		}
@@ -217,7 +242,11 @@ function processLine(lineText, globalState) {
 				return Ok(true);
 		}
 	} else {
-		console.log("didn't match");
+		let matchedText = lineText.match(/\d+(?=,)?/);
+		if (matchedText) {
+			// WIP: for other stuff like script expansion, more comments  
+		}
+		return Ok(true);
 	}
 
 }

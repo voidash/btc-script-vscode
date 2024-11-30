@@ -8,45 +8,56 @@
  * @returns{convertedOp}
  */
 function convertNumbers(opcode) {
-	switch (opcode) {
-		case "OP_0":
-		case "OP_FALSE":
-			return { op: "OP_NUMBER", val: 0}
-		case "OP_1NEGATE":
-			return { op: "OP_NUMBER", val: -1}
-		case "OP_1":
-		case "OP_TRUE":
-			return { op: "OP_NUMBER", val: 1}
-		case "OP_2":
-			return { op: "OP_NUMBER", val: 2}
-		case "OP_3":
-			return { op: "OP_NUMBER", val: 3}
-		case "OP_4":
-			return { op: "OP_NUMBER", val: 4}
-		case "OP_5":
-			return { op: "OP_NUMBER", val: 5}
-		case "OP_6":
-			return { op: "OP_NUMBER", val: 6}
-		case "OP_7":
-			return { op: "OP_NUMBER", val: 7}
-		case "OP_8":
-			return { op: "OP_NUMBER", val: 8}
-		case "OP_9":
-			return { op: "OP_NUMBER", val: 9}
-		case "OP_10":
-			return { op: "OP_NUMBER", val: 10}
-		case "OP_11":
-			return { op: "OP_NUMBER", val: 11}
-		case "OP_12":
-			return { op: "OP_NUMBER", val: 12}
-		case "OP_13":
-			return { op: "OP_NUMBER", val: 13}
-		case "OP_14":
-			return { op: "OP_NUMBER", val: 14}
-		case "OP_15":
-			return { op: "OP_NUMBER", val: 15}
-		case "OP_16":
-			return { op: "OP_NUMBER", val: 16}
+	if(opcode.match(/OP_\w+/)) {
+		switch (opcode) {
+			case "OP_0":
+			case "OP_FALSE":
+				return { op: "OP_NUMBER", val: 0}
+			case "OP_1NEGATE":
+				return { op: "OP_NUMBER", val: -1}
+			case "OP_1":
+			case "OP_TRUE":
+				return { op: "OP_NUMBER", val: 1}
+			case "OP_2":
+				return { op: "OP_NUMBER", val: 2}
+			case "OP_3":
+				return { op: "OP_NUMBER", val: 3}
+			case "OP_4":
+				return { op: "OP_NUMBER", val: 4}
+			case "OP_5":
+				return { op: "OP_NUMBER", val: 5}
+			case "OP_6":
+				return { op: "OP_NUMBER", val: 6}
+			case "OP_7":
+				return { op: "OP_NUMBER", val: 7}
+			case "OP_8":
+				return { op: "OP_NUMBER", val: 8}
+			case "OP_9":
+				return { op: "OP_NUMBER", val: 9}
+			case "OP_10":
+				return { op: "OP_NUMBER", val: 10}
+			case "OP_11":
+				return { op: "OP_NUMBER", val: 11}
+			case "OP_12":
+				return { op: "OP_NUMBER", val: 12}
+			case "OP_13":
+				return { op: "OP_NUMBER", val: 13}
+			case "OP_14":
+				return { op: "OP_NUMBER", val: 14}
+			case "OP_15":
+				return { op: "OP_NUMBER", val: 15}
+			case "OP_16":
+				return { op: "OP_NUMBER", val: 16}
+		}
+	}
+
+	if(opcode.match(/(0[oO][0-7]+\b|\b0[xX][0-9a-fA-F]+\b|\b\d+\b)(?=,)?/)) {
+		// convert opcode to 	
+		let num = eval(opcode);
+		console.log(num)
+		if (num.toString(2).length <= 4160) {
+			return { op: "OP_PUSHBYTES", val: num }
+		}
 	}
 	return {op : opcode} 
 }

@@ -109,7 +109,7 @@ function error(message, state) {
     */
     "OP_2DROP": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for 2DROP", state);
+        return error("2DROP requires two items in stack", state);
       }
       
       try{
@@ -196,7 +196,7 @@ function error(message, state) {
     */
     "OP_2ROT": function(state) {
       if (state.main.size() < 6) {
-        return error("Need six items for 2ROT", state);
+        return error("2ROT requires six items in stack", state);
       }
       
       try {
@@ -237,7 +237,7 @@ function error(message, state) {
     */
    "OP_2SWAP": function(state) {
       if (state.main.size() < 4) {
-        return error("Need four items for 2SWAP", state);
+        return error("2SWAP requires four items in stack", state);
       }
       
       try {
@@ -271,7 +271,7 @@ function error(message, state) {
     */
     "OP_3DUP": function(state) {
       if (state.main.size() < 3) {
-        return error("Need three items for 3DUP", state);
+        return error("3DUP requires three items in stack", state);
       }
       
       try {
@@ -323,7 +323,7 @@ function error(message, state) {
     */
     "OP_ADD": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for ADD", state);
+        return error("ADD requires two items in stack", state);
       }
       
       try {
@@ -354,7 +354,7 @@ function error(message, state) {
     */
     "OP_BOOLAND": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for BOOLAND", state);
+        return error("BOOLAND requires two items in stack", state);
       }
       
       try {
@@ -384,7 +384,7 @@ function error(message, state) {
     */
     "OP_BOOLOR": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for BOOLOR", state);
+        return error("BOOLOR requires two items in stack", state);
       }
       
       try {
@@ -413,7 +413,7 @@ function error(message, state) {
     */
     "OP_CAT": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for CAT", state);
+        return error("CAT requires two items in stack", state);
       }
       
       try {
@@ -462,7 +462,7 @@ function error(message, state) {
 
     // Check if we have enough items for pubkeys
       if (state.main.size() < num_pubkeys) {
-        return error("Stack underflow: not enough pubkeys", state);
+        return error("Insufficient stack items: not enough pubkeys", state);
       }
      
     // Remove pubkeys
@@ -479,7 +479,7 @@ function error(message, state) {
       
      // Check if we have enough items for signatures
       if (state.main.size() < num_sigs) {
-        return error("Stack underflow: not enough signatures", state);
+        return error("Insufficient stack items: not enough signatures", state);
       }
   
      // Remove signatures
@@ -531,7 +531,7 @@ function error(message, state) {
     
         // Check if we have enough items for pubkeys
         if (state.main.size() < num_pubkeys) {
-            return error("Stack underflow: not enough pubkeys", state);
+            return error("Insufficient stack items: not enough pubkeys", state);
         }
     
         // Remove pubkeys
@@ -548,7 +548,7 @@ function error(message, state) {
     
         // Check if we have enough items for signatures
         if (state.main.size() < num_sigs) {
-            return error("Stack underflow: not enough signatures", state);
+            return error("Insufficient stack items: not enough signatures", state);
         }
     
         // Remove signatures
@@ -720,7 +720,7 @@ function error(message, state) {
     */
     "OP_DUP": function(state) {
       if (state.main.size() === 0) {
-        return error("Stack underflow", state);
+        return error("Insufficient stack items", state);
       }
       
       try {
@@ -771,7 +771,7 @@ function error(message, state) {
     */
     "OP_EQUAL": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for EQUAL", state);
+        return error("EQUAL requires two items in stack", state);
       }
       
       try {
@@ -797,7 +797,7 @@ function error(message, state) {
     */
     "OP_EQUALVERIFY": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for EQUALVERIFY", state);
+        return error("EQUALVERIFY requires two items in stack", state);
       }
       
       try {
@@ -831,7 +831,7 @@ function error(message, state) {
     */
     "OP_FROMALTSTACK": function(state) {
       if (state.alt.size() === 0) {
-        return error("Alt stack underflow", state);
+        return error("Alt Insufficient stack items", state);
       }
       
       try {
@@ -855,7 +855,7 @@ function error(message, state) {
     */
     "OP_GREATERTHAN": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for GREATERTHAN", state);
+        return error("GREATERTHAN requires two items in stack", state);
       }
       
       try {
@@ -884,7 +884,7 @@ function error(message, state) {
     */
     "OP_GREATERTHANOREQUAL": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for GREATERTHANOREQUAL", state);
+        return error("GREATERTHANOREQUAL requires two items in stack", state);
       }
       
       try {
@@ -912,7 +912,7 @@ function error(message, state) {
     */
     "OP_HASH": function(state) {
       if (state.main.size() < 1) {
-        return error("Stack underflow", state);
+        return error("Insufficient stack items", state);
       }
       
       try {
@@ -988,7 +988,7 @@ function error(message, state) {
     */
     "OP_LESSTHAN": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for LESSTHAN", state);
+        return error("LESSTHAN requires two items in stack", state);
       }
       
       try {
@@ -1017,7 +1017,7 @@ function error(message, state) {
     */
     "OP_LESSTHANOREQUAL": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for LESSTHANOREQUAL", state);
+        return error("LESSTHANOREQUAL requires two items in stack", state);
       }
       
       try {
@@ -1046,7 +1046,7 @@ function error(message, state) {
     */
     "OP_MAX": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for MAX", state);
+        return error("MAX requires two items in stack", state);
       }
       
       try {
@@ -1075,7 +1075,7 @@ function error(message, state) {
     */
     "OP_MIN": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for MIN", state);
+        return error("MIN requires two items in stack", state);
       }
       
       try {
@@ -1129,7 +1129,7 @@ function error(message, state) {
     */
     "OP_NIP": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for NIP", state);
+        return error("NIP requires two items in stack", state);
       }
       
       try {
@@ -1213,7 +1213,7 @@ function error(message, state) {
     */
     "OP_NUMEQUAL": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for NUMEQUAL", state);
+        return error("NUMEQUAL requires two items in stack", state);
       }
       
       try {
@@ -1242,7 +1242,7 @@ function error(message, state) {
     */
     "OP_NUMEQUALVERIFY": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for NUMEQUALVERIFY", state);
+        return error("NUMEQUALVERIFY requires two items in stack", state);
       }
       
     try {
@@ -1279,7 +1279,7 @@ function error(message, state) {
     */
     "OP_NUMNOTEQUAL": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for NUMNOTEQUAL", state);
+        return error("NUMNOTEQUAL requires two items in stack", state);
       }
       
       try {
@@ -1307,7 +1307,7 @@ function error(message, state) {
     */
     "OP_OVER": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for OVER", state);
+        return error("OVER requires two items in stack", state);
       }
       
       try {
@@ -1415,7 +1415,7 @@ function error(message, state) {
     */
     "OP_ROT": function(state) {
       if (state.main.size() < 3) {
-        return error("Need three items for ROT", state);
+        return error("ROT requires three items in stack", state);
       }
       
       try {
@@ -1467,7 +1467,7 @@ function error(message, state) {
     */
     "OP_SUB": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for SUB", state);
+        return error("SUB requires two items in stack", state);
       }
       
       try {
@@ -1497,7 +1497,7 @@ function error(message, state) {
     */
     "OP_SWAP": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for SWAP", state);
+        return error("SWAP requires two items in stack", state);
       }
       
       try {
@@ -1522,7 +1522,7 @@ function error(message, state) {
     */
     "OP_TOALTSTACK": function(state) {
       if (state.main.size() === 0) {
-        return error("Stack underflow", state);
+        return error("Insufficient stack items", state);
       }
       
       try {
@@ -1548,7 +1548,7 @@ function error(message, state) {
     */
     "OP_TUCK": function(state) {
       if (state.main.size() < 2) {
-        return error("Need two items for TUCK", state);
+        return error("TUCK requires two items in stack", state);
       }
       
       try {
@@ -1606,7 +1606,7 @@ function error(message, state) {
     */
     "OP_WITHIN": function(state) {
       if (state.main.size() < 3) {
-        return error("Need three items for WITHIN", state);
+        return error("WITHIN requires three items in stack", state);
       }
       
       try { 
@@ -1653,6 +1653,12 @@ function error(message, state) {
         return state;
       };
     },
+    "OP_PUSHDATA": function(val) {
+      return function(state) {
+        state.main.push(val);
+        return state;
+      }
+    }
   }
 
   module.exports = {

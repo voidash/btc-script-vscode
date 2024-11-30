@@ -1,65 +1,74 @@
-# btc-script README
+<img src="https://github.com/user-attachments/assets/55760071-d7f5-4bae-b388-3ebb4b3838e1"  width="240" align="right" style="margin-top:-40px">
 
-This is the README for your extension "btc-script". After writing up a brief description, we recommend including the following sections.
+# [`BitcoinScriptVscode`](https://github.com/voidash/btc-script-vscode)  🔗🔥
 
-## Features
+VScode plugin for Bitcoin Script within Rust files and (<b><i>.btc</i></b>) files 
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
 
-For example if there is an image subfolder under your extension project workspace:
+## Features 🍙
 
-\!\[feature X\]\(images/feature-x.png\)
+- **Syntax Highlighting**: Added the textmate language grammar. Highlighting works on `.rs` files as the grammar is injected for Rust files 
+- **Instant Feedback**: The stack content changes are shown on the right side with virtual text
+- **Simple**: Just add in the `[main stack]` and `[alt stack]` on top of your script
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
 
-## Requirements
+## How it works 🛠️
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+<img src="https://github.com/user-attachments/assets/bb2c9699-9272-40af-afeb-cbb18d215ecf" width="500" alt="extension working" align="center">
 
-## Extension Settings
+The first line should be in one of these formats:
+- `[A, B]` (just the main stack)
+- `[A, B] [C]` (the main stack and the alt-stack)
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+### Inside `script!` ✍️
 
-For example:
+```rust
+pub fn u8_extract_1bit() -> Script {
+    script! {
+        // [1,2], [3,4]
+        OP_DUP
+        OP_ADD
+        256
+        OP_2DUP
+        OP_GREATERTHANOREQUAL
+        OP_IF
+            OP_SUB
+            1
+        OP_ELSE
+            OP_DROP
+            0
+        OP_ENDIF
+    }
+}
+```
 
-This extension contributes the following settings:
+### Inside `//btc-script` comment block 📝
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+```
+// btc-script
+  [3,4]
+  OP_DUP
+  OP_TOALTSTACK
+// end-btc-script
+```
 
-## Known Issues
+### On `.btc` file 💼 
+You can also create a `.btc` file and then on top of the file. Add your main and alt stacks as mentioned above 
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
 
-## Release Notes
+## Acknowledgments 🙏 
+Inspired from this [tweet by @t4t5](https://x.com/t4t5/status/1861066474623782959)
+Repo [bitcoin-script-hints](https://github.com/taproot-wizards/bitcoin-script-hints.nvim) 
 
-Users appreciate release notes as you update your extension.
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
 
-### 1.0.0
+## Things to improve 📋
 
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+- Instead of abstracting all the Hash opcodes, have a real hash and also real checksig verify 
+- Add two modes, Toy mode and Real mode. Real mode works with real hashes and signatures  
+- variable mapping for BitVM based script style, so compile time inference might be possible 
+- script expansion with maybe intermediate cargo expand step for BitVM (no idea if this works or not)
+ 
